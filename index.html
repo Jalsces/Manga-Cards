@@ -100,6 +100,41 @@
     border-left: 4px solid var(--accent);
   }
 
+  .install-list {
+    list-style: none;
+    margin: 0 0 48px;
+    padding: 0;
+    counter-reset: step;
+  }
+
+  .install-list li {
+    position: relative;
+    padding: 14px 0 14px 44px;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .install-list li:last-child { border-bottom: none; }
+
+  .install-list li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--paper);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .todo-list {
     list-style: none;
     margin: 0;
@@ -158,13 +193,26 @@
 
     <div class="download-card">
       <div>
-        <strong>Dernière version — v1.0</strong>
-        <p>Fichier .zip prêt à jouer</p>
+        <strong>Jeu prêt à jouer</strong>
       </div>
       <a class="btn" href="https://github.com/Jalsces/Manga-Cards/releases/download/v1.0/Jeu.zip">
         Télécharger
       </a>
     </div>
+
+    <section>
+      <h2>Comment installer</h2>
+      <ol class="install-list">
+        <li>Cliquez sur le bouton "Télécharger" ci-dessus</li>
+        <li>Allez dans vos téléchargements</li>
+        <li>Ouvrez le fichier "Jeu"</li>
+        <li>Appuyez sur "Jeu", puis sur "Extraire tout", puis sur "Extraire"</li>
+        <li>Retournez dans vos téléchargements</li>
+        <li>Ouvrez le deuxième fichier</li>
+        <li>Appuyez sur "Jeu"</li>
+        <li>Une page va s'ouvrir : appuyez sur "Informations complémentaires", puis sur "Exécuter quand même"</li>
+      </ol>
+    </section>
 
     <section>
       <h2>À faire</h2>
