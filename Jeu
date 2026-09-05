@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manga-Cards</title>
+<style>
+  :root {
+    --ink: #1b1820;
+    --paper: #f4efe6;
+    --accent: #e8483c;
+    --accent-soft: #ffd9d4;
+    --line: rgba(27,24,32,0.14);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-image:
+      radial-gradient(circle, rgba(27,24,32,0.06) 1px, transparent 1.4px);
+    background-size: 14px 14px;
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+
+  header {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin: 0 0 8px;
+    line-height: 1;
+  }
+
+  .tagline {
+    font-size: 17px;
+    color: rgba(27,24,32,0.65);
+    margin: 0;
+  }
+
+  .rules-intro {
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 0 28px;
+    color: rgba(27,24,32,0.75);
+  }
+
+  .rules-list {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+  }
+
+  .rules-list li {
+    position: relative;
+    padding: 10px 0 10px 20px;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .rules-list li:last-child { border-bottom: none; }
+
+  .rules-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 19px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .about {
+    margin-bottom: 0;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--ink);
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    color: rgba(27,24,32,0.5);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s ease;
+  }
+
+  .tab-btn:hover {
+    color: var(--ink);
+  }
+
+  .tab-btn.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .about-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 20px;
+  }
+
+  .about-label {
+    font-size: 13px;
+    color: rgba(27,24,32,0.5);
+    margin: 0 0 8px;
+  }
+
+  .fav-list {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+  }
+
+  .fav-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+  }
+
+  .fav-list li:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .fav-list:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .download-card {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 28px;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .download-card p {
+    margin: 0;
+    font-size: 15px;
+    color: rgba(244,239,230,0.7);
+  }
+
+  .download-card strong {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 4px;
+    color: var(--paper);
+  }
+
+  .btn {
+    background: var(--accent);
+    color: var(--paper);
+    text-decoration: none;
+    padding: 14px 26px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 15px;
+    white-space: nowrap;
+    transition: transform 0.15s ease;
+  }
+
+  .btn:hover { transform: translateY(-2px); }
+
+  section h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 24px;
+    margin: 0 0 20px;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent);
+  }
+
+  .install-list {
+    list-style: none;
+    margin: 0 0 48px;
+    padding: 0;
+    counter-reset: step;
+  }
+
+  .install-list li {
+    position: relative;
+    padding: 14px 0 14px 44px;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .install-list li:last-child { border-bottom: none; }
+
+  .install-list li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--paper);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .drop-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 48px;
+    font-size: 15px;
+  }
+
+  .drop-table tr {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .drop-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .drop-table td {
+    padding: 12px 4px;
+  }
+
+  .drop-table td:nth-child(2) {
+    text-align: center;
+  }
+
+  .drop-table td:last-child {
+    text-align: right;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .rarity {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .rarity-rare { background: #dfe6ec; color: #3a5b74; }
+  .rarity-super { background: #d9efd9; color: #2f6b34; }
+  .rarity-epic { background: #e7dbf5; color: #6a3aa0; }
+  .rarity-myth { background: #ffe0c2; color: #a35a12; }
+  .rarity-legend { background: #f7dfa0; color: #8a6400; }
+  .rarity-first { background: #e6e6e6; color: #555; }
+
+  .table-scroll {
+    overflow-x: auto;
+    margin: 0 -24px;
+    padding: 0 24px;
+  }
+
+  .char-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 620px;
+  }
+
+  .char-table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: none;
+    color: rgba(27,24,32,0.5);
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--ink);
+    white-space: nowrap;
+  }
+
+  .char-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  .char-table td:first-child, .char-table th:first-child {
+    white-space: normal;
+    min-width: 160px;
+  }
+
+  .char-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .item-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .item-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .item-list li:last-child { border-bottom: none; }
+
+  .item-name {
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .item-desc {
+    font-size: 14px;
+    color: rgba(27,24,32,0.6);
+    line-height: 1.5;
+  }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: rgba(27,24,32,0.45);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Manga-Cards</h1>
+      <p class="tagline">Suivi du projet et téléchargement du jeu.</p>
+    </header>
+
+    <div class="download-card">
+      <div>
+        <strong>Jeu prêt à jouer</strong>
+      </div>
+      <a class="btn" href="https://github.com/Jalsces/Manga-Cards/releases/download/v1.0/Jeu.zip">
+        Télécharger
+      </a>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-target="panel-rules">Règles</button>
+      <button class="tab-btn" data-target="panel-install">Comment installer</button>
+      <button class="tab-btn" data-target="panel-drops">Probabilités des coffres</button>
+      <button class="tab-btn" data-target="panel-objects">Objets</button>
+      <button class="tab-btn" data-target="panel-characters">Personnages</button>
+      <button class="tab-btn" data-target="panel-about">À propos</button>
+    </nav>
+
+    <section class="tab-panel active" id="panel-rules">
+      <h2>Règles</h2>
+      <p class="rules-intro">Un combat oppose ton personnage à un adversaire, tour par tour, jusqu'à ce qu'un des deux tombe à 0 PV.</p>
+
+      <p class="about-label">Déroulement</p>
+      <ul class="rules-list">
+        <li>L'initiative est tirée au hasard au début du combat : soit toi, soit l'adversaire commence.</li>
+        <li>À chaque tour, ton énergie et celle de l'adversaire augmentent de +1 (sauf si l'adversaire est pétrifié, il n'en regagne pas ce tour-là).</li>
+        <li>Pendant ton tour, tu peux : attaquer, faire une super attaque, utiliser un objet de ton inventaire, ou renvoyer une attaque que tu as stockée grâce à un effet.</li>
+        <li>Attaquer et faire une super attaque coûtent de l'énergie (le "Coût" et le "Coût Super ATK" affichés dans l'onglet Personnages) — pas assez d'énergie, pas d'action possible.</li>
+        <li>L'adversaire agit automatiquement : il a une petite chance de faire sa super attaque s'il a assez d'énergie, sinon il attaque normalement, sinon il ne peut rien faire.</li>
+      </ul>
+
+      <p class="about-label">Effets spéciaux</p>
+      <ul class="rules-list">
+        <li>Pétrification : l'adversaire pétrifié passe son tour et ne regagne pas d'énergie.</li>
+        <li>Extensions de territoire : elles appliquent un effet spécial chaque tour (ex. esquive, vol de stats) tant qu'elles sont actives, et se désactivent à la fin du combat.</li>
+        <li>Les objets à utilisations limitées (comme Death Note ou Rika) t'indiquent combien il en reste après chaque utilisation.</li>
+      </ul>
+
+      <p class="about-label">Fin du combat</p>
+      <ul class="rules-list">
+        <li>Victoire : tu gagnes de l'XP, tu avances dans le pass de combat, tu ouvres un coffre, et tes personnages qui ont atteint leur niveau requis peuvent évoluer vers leur forme suivante.</li>
+        <li>Défaite : ton personnage peut mourir si ses PV tombent à 0.</li>
+      </ul>
+    </section>
+
+    <section class="tab-panel" id="panel-install">
+      <h2>Comment installer</h2>
+      <ol class="install-list">
+        <li>Cliquez sur le bouton "Télécharger" ci-dessus</li>
+        <li>Allez dans vos téléchargements</li>
+        <li>Ouvrez le fichier "Jeu"</li>
+        <li>Appuyez sur "Jeu", puis sur "Extraire tout", puis sur "Extraire"</li>
+        <li>Retournez dans vos téléchargements</li>
+        <li>Ouvrez le deuxième fichier</li>
+        <li>Appuyez sur "Jeu"</li>
+        <li>Une page va s'ouvrir : appuyez sur "Informations complémentaires", puis sur "Exécuter quand même"</li>
+      </ol>
+    </section>
+
+    <section class="tab-panel" id="panel-drops">
+      <h2>Probabilités des coffres</h2>
+      <table class="drop-table">
+        <tbody>
+          <tr><td>Potion</td><td><span class="rarity rarity-rare">Rare</span></td><td>32.5%</td></tr>
+          <tr><td>Super Potion</td><td><span class="rarity rarity-super">Super Rare</span></td><td>16.25%</td></tr>
+          <tr><td>Kunai</td><td><span class="rarity rarity-rare">Rare</span></td><td>11.5%</td></tr>
+          <tr><td>Mera Mera No Mi</td><td><span class="rarity rarity-epic">Épique</span></td><td>9.3%</td></tr>
+          <tr><td>Shuriken Fuma</td><td><span class="rarity rarity-super">Super Rare</span></td><td>5.75%</td></tr>
+          <tr><td>Soul Solid</td><td><span class="rarity rarity-myth">Mythique</span></td><td>5.28%</td></tr>
+          <tr><td>Mr Satan, Ino et Chopper</td><td><span class="rarity rarity-rare">Rare</span></td><td>2%</td></tr>
+          <tr><td>Dial Impact et Lame du bourreau</td><td><span class="rarity rarity-epic">Épique</span></td><td>1.65%</td></tr>
+          <tr><td>Death Note</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>1.3%</td></tr>
+          <tr><td>Choso, Gros Buu et Gowther</td><td><span class="rarity rarity-super">Super Rare</span></td><td>1%</td></tr>
+          <tr><td>Ope Ope No Mi et Lostyvane</td><td><span class="rarity rarity-myth">Mythique</span></td><td>0.88%</td></tr>
+          <tr><td>Vegeta, Broly, Piccolo et Ban</td><td><span class="rarity rarity-epic">Épique</span></td><td>0.6%</td></tr>
+          <tr><td>Hakai</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>0.46%</td></tr>
+          <tr><td>Gyomei, Yuji et Kakashi</td><td><span class="rarity rarity-myth">Mythique</span></td><td>0.32%</td></tr>
+          <tr><td>Rayleigh, Yorichi et Mael</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>0.08%</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="tab-panel" id="panel-objects">
+      <h2>Objets</h2>
+      <ul class="item-list">
+        <li><span class="item-name">Kunai</span><span class="item-desc">Arme utilisée par les ninjas, inflige 8 dégâts</span></li>
+        <li><span class="item-name">Shuriken Fuma</span><span class="item-desc">Arme également utilisée par les ninjas, inflige 12 dégâts</span></li>
+        <li><span class="item-name">Potion</span><span class="item-desc">Objet utilisé pour se soigner de 6 PV</span></li>
+        <li><span class="item-name">Super Potion</span><span class="item-desc">Objet utilisé pour se soigner de 13 PV</span></li>
+        <li><span class="item-name">Mera Mera No Mi</span><span class="item-desc">Fruit du démon d'Ace puis de Sabo, inflige 2 dégâts par tour à l'adversaire</span></li>
+        <li><span class="item-name">Lame du Bourreau</span><span class="item-desc">Épée magique permettant de paralyser l'adversaire pour 2 tours</span></li>
+        <li><span class="item-name">Lostyvane</span><span class="item-desc">Artefact sacré de Meliodas, permet de multiplier son attaque, sa super attaque et ses PV par 3 (non utilisable par un légendaire)</span></li>
+        <li><span class="item-name">Soul Solid</span><span class="item-desc">Épée de Brook permettant de paralyser l'adversaire pendant 3 tours</span></li>
+        <li><span class="item-name">Death Note</span><span class="item-desc">Cahier de la mort permettant de tuer des adversaires de rareté Rare, Super Rare et Épique</span></li>
+        <li><span class="item-name">Hakai</span><span class="item-desc">Pouvoir des dieux de la destruction permettant de tuer n'importe quel adversaire</span></li>
+        <li><span class="item-name">Rouleau</span><span class="item-desc">Outil ninja secret qui permet de multiplier son attaque, sa super attaque et ses PV par 2 (non utilisable par un légendaire)</span></li>
+        <li><span class="item-name">Kinto Un</span><span class="item-desc">Objet maudit, inflige 14 dégâts</span></li>
+        <li><span class="item-name">Nyoi Bo</span><span class="item-desc">Bâton magique de Son Goku, inflige 13 dégâts</span></li>
+        <li><span class="item-name">Précepte du Silence</span><span class="item-desc">Pouvoir de Monspiet, inflige 2 dégâts par tour à l'adversaire</span></li>
+        <li><span class="item-name">Précepte de l'Altruisme</span><span class="item-desc">Pouvoir du vieux Gowther, permet d'ajouter l'adversaire dans son équipe (ne marche pas sur un légendaire)</span></li>
+        <li><span class="item-name">Précepte de la Vérité</span><span class="item-desc">Pouvoir de Galan, permet de paralyser l'adversaire pour 2 tours</span></li>
+        <li><span class="item-name">Ultra Potion</span><span class="item-desc">Création d'Orochimaru, permet de se soigner de 100 PV</span></li>
+        <li><span class="item-name">Potaras</span><span class="item-desc">Artefact magique des Kaio, permet de fusionner 2 persos</span></li>
+        <li><span class="item-name">Yami Yami No Mi</span><span class="item-desc">Fruit du démon de Barbe Noire, permet d'ajouter à votre attaque et votre super attaque, l'attaque et la super attaque de l'adversaire</span></li>
+        <li><span class="item-name">Soru Soru No Mi</span><span class="item-desc">Fruit du démon de Big Mom, permet de donner vie à une arme, elle s'ajoute dans votre équipe</span></li>
+        <li><span class="item-name">Massue de Kaido</span><span class="item-desc">Arme du Yonko, inflige 33 dégâts</span></li>
+        <li><span class="item-name">Extensions de Territoire</span><span class="item-desc">Permet de choisir entre 3 territoires, utilisable 3 fois</span></li>
+        <li><span class="item-name">Extension de Territoire de Satoru Gojo</span><span class="item-desc">Pouvoir du plus puissant des exorcistes, permet d'esquiver 90% des attaques ennemies</span></li>
+        <li><span class="item-name">Extension de Territoire de Ryomen Sukuna</span><span class="item-desc">Pouvoir du roi des fléaux, permet d'augmenter tes attaques de 50% et de baisser celles de tes adversaires de 30%</span></li>
+        <li><span class="item-name">Extension de Territoire de Yuta Okkotsu</span><span class="item-desc">Pouvoir du disciple de Gojo, permet d'ajouter à votre attaque et votre super attaque, le double de l'attaque et le double de la super attaque de l'adversaire</span></li>
+        <li><span class="item-name">Katana de Kokushibo</span><span class="item-desc">Arme de la 1ère lune supérieure, inflige 41 dégâts</span></li>
+        <li><span class="item-name">Sang de Démon</span><span class="item-desc">Pouvoir de Muzan, permet d'ajouter l'adversaire dans son équipe</span></li>
+      </ul>
+    </section>
+
+    <section class="tab-panel" id="panel-characters">
+      <h2>Personnages</h2>
+      <div class="table-scroll">
+      <table class="char-table">
+        <thead>
+          <tr><th>Nom</th><th>Manga</th><th>Rareté</th><th>PV</th><th>ATK</th><th>Super ATK</th><th>Coût</th><th>Coût Super ATK</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Kid Naruto</td><td>Naruto</td><td><span class="rarity rarity-first">Premier perso</span></td><td>11</td><td>2</td><td>8</td><td>2</td><td>4</td></tr>
+          <tr><td>Kid Goku</td><td>Dragon Ball</td><td><span class="rarity rarity-first">Premier perso</span></td><td>10</td><td>3</td><td>9</td><td>2</td><td>3</td></tr>
+          <tr><td>Kid Gohan</td><td>Dragon Ball</td><td><span class="rarity rarity-first">Premier perso</span></td><td>9</td><td>4</td><td>11</td><td>2</td><td>4</td></tr>
+          <tr><td>Yajirobe</td><td>Dragon Ball</td><td><span class="rarity rarity-rare">Rare</span></td><td>16</td><td>2</td><td>4</td><td>3</td><td>5</td></tr>
+          <tr><td>Démons aux mains</td><td>Demon Slayer</td><td><span class="rarity rarity-rare">Rare</span></td><td>15</td><td>4</td><td>7</td><td>3</td><td>5</td></tr>
+          <tr><td>Tony Tony Chopper</td><td>One Piece</td><td><span class="rarity rarity-rare">Rare</span></td><td>14</td><td>6</td><td>8</td><td>2</td><td>4</td></tr>
+          <tr><td>Ino Yamanaka</td><td>Naruto</td><td><span class="rarity rarity-rare">Rare</span></td><td>14</td><td>7</td><td>9</td><td>3</td><td>5</td></tr>
+          <tr><td>Chaozu</td><td>Dragon Ball</td><td><span class="rarity rarity-rare">Rare</span></td><td>14</td><td>7</td><td>6</td><td>2</td><td>3</td></tr>
+          <tr><td>Murata</td><td>Demon Slayer</td><td><span class="rarity rarity-rare">Rare</span></td><td>14</td><td>6</td><td>6</td><td>3</td><td>5</td></tr>
+          <tr><td>Fléau du doigt de Sukuna</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-rare">Rare</span></td><td>14</td><td>6</td><td>9</td><td>3</td><td>5</td></tr>
+          <tr><td>Mr. Satan</td><td>Dragon Ball</td><td><span class="rarity rarity-rare">Rare</span></td><td>13</td><td>6</td><td>8</td><td>2</td><td>4</td></tr>
+          <tr><td>Panda</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-rare">Rare</span></td><td>13</td><td>5</td><td>7</td><td>3</td><td>5</td></tr>
+          <tr><td>Morgan</td><td>One Piece</td><td><span class="rarity rarity-rare">Rare</span></td><td>13</td><td>6</td><td>8</td><td>2</td><td>4</td></tr>
+          <tr><td>Général Blue</td><td>Dragon Ball</td><td><span class="rarity rarity-rare">Rare</span></td><td>13</td><td>6</td><td>8</td><td>2</td><td>4</td></tr>
+          <tr><td>Sabito</td><td>Demon Slayer</td><td><span class="rarity rarity-rare">Rare</span></td><td>12</td><td>5</td><td>7</td><td>3</td><td>4</td></tr>
+          <tr><td>Twigo</td><td>7DS</td><td><span class="rarity rarity-rare">Rare</span></td><td>12</td><td>5</td><td>8</td><td>3</td><td>5</td></tr>
+          <tr><td>Colonel Silver</td><td>Dragon Ball</td><td><span class="rarity rarity-rare">Rare</span></td><td>11</td><td>5</td><td>7</td><td>2</td><td>4</td></tr>
+          <tr><td>Mizuki</td><td>Naruto</td><td><span class="rarity rarity-rare">Rare</span></td><td>10</td><td>4</td><td>6</td><td>3</td><td>4</td></tr>
+          <tr><td>Kunai</td><td>Naruto</td><td><span class="rarity rarity-rare">Rare</span></td><td>10</td><td>5</td><td>6</td><td>2</td><td>3</td></tr>
+          <tr><td>Oolong et Puerh</td><td>Dragon Ball</td><td><span class="rarity rarity-rare">Rare</span></td><td>9</td><td>3</td><td>6</td><td>3</td><td>5</td></tr>
+          <tr><td>Alvida la massue</td><td>One Piece</td><td><span class="rarity rarity-rare">Rare</span></td><td>7</td><td>3</td><td>6</td><td>2</td><td>3</td></tr>
+          <tr><td>Princesse Elizabeth</td><td>7DS</td><td><span class="rarity rarity-rare">Rare</span></td><td>6</td><td>2</td><td>5</td><td>2</td><td>3</td></tr>
+          <tr><td>Pilaf</td><td>Dragon Ball</td><td><span class="rarity rarity-rare">Rare</span></td><td>5</td><td>2</td><td>4</td><td>3</td><td>4</td></tr>
+          <tr><td>Koby</td><td>One Piece</td><td><span class="rarity rarity-rare">Rare</span></td><td>4</td><td>2</td><td>4</td><td>2</td><td>4</td></tr>
+          <tr><td>Kid Gohan SSJ2</td><td>Dragon Ball</td><td><span class="rarity rarity-super">Super Rare</span></td><td>33</td><td>13</td><td>21</td><td>4</td><td>5</td></tr>
+          <tr><td>Goku Z</td><td>Dragon Ball</td><td><span class="rarity rarity-super">Super Rare</span></td><td>30</td><td>12</td><td>19</td><td>3</td><td>4</td></tr>
+          <tr><td>Todo Aoi</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-super">Super Rare</span></td><td>29</td><td>12</td><td>18</td><td>4</td><td>6</td></tr>
+          <tr><td>Inosuke</td><td>Demon Slayer</td><td><span class="rarity rarity-super">Super Rare</span></td><td>27</td><td>11</td><td>17</td><td>3</td><td>6</td></tr>
+          <tr><td>Baton magique</td><td>Dragon Ball</td><td><span class="rarity rarity-super">Super Rare</span></td><td>27</td><td>14</td><td>14</td><td>3</td><td>5</td></tr>
+          <tr><td>Chopper Monster Point</td><td>One Piece</td><td><span class="rarity rarity-super">Super Rare</span></td><td>26</td><td>12</td><td>18</td><td>4</td><td>7</td></tr>
+          <tr><td>Nuage Interdit</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-super">Super Rare</span></td><td>26</td><td>13</td><td>14</td><td>3</td><td>6</td></tr>
+          <tr><td>Howzer</td><td>7DS</td><td><span class="rarity rarity-super">Super Rare</span></td><td>25</td><td>10</td><td>16</td><td>3</td><td>5</td></tr>
+          <tr><td>Brook</td><td>One Piece</td><td><span class="rarity rarity-super">Super Rare</span></td><td>25</td><td>10</td><td>16</td><td>3</td><td>5</td></tr>
+          <tr><td>Koby du Sword</td><td>One Piece</td><td><span class="rarity rarity-super">Super Rare</span></td><td>24</td><td>10</td><td>17</td><td>3</td><td>5</td></tr>
+          <tr><td>Ninja de Kiri</td><td>Naruto</td><td><span class="rarity rarity-super">Super Rare</span></td><td>24</td><td>13</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Gros Buu</td><td>Dragon Ball</td><td><span class="rarity rarity-super">Super Rare</span></td><td>23</td><td>10</td><td>14</td><td>4</td><td>6</td></tr>
+          <tr><td>Mei Mei</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-super">Super Rare</span></td><td>23</td><td>10</td><td>14</td><td>4</td><td>6</td></tr>
+          <tr><td>Rock Lee</td><td>Boruto</td><td><span class="rarity rarity-super">Super Rare</span></td><td>23</td><td>10</td><td>14</td><td>4</td><td>6</td></tr>
+          <tr><td>Zenitsu</td><td>Demon Slayer</td><td><span class="rarity rarity-super">Super Rare</span></td><td>23</td><td>10</td><td>14</td><td>4</td><td>6</td></tr>
+          <tr><td>Nezuko</td><td>Demon Slayer</td><td><span class="rarity rarity-super">Super Rare</span></td><td>23</td><td>10</td><td>14</td><td>4</td><td>6</td></tr>
+          <tr><td>Gilthunder</td><td>7DS</td><td><span class="rarity rarity-super">Super Rare</span></td><td>23</td><td>10</td><td>14</td><td>4</td><td>6</td></tr>
+          <tr><td>Tao Pai Pai</td><td>Dragon Ball</td><td><span class="rarity rarity-super">Super Rare</span></td><td>23</td><td>10</td><td>14</td><td>3</td><td>5</td></tr>
+          <tr><td>Choso</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-super">Super Rare</span></td><td>21</td><td>9</td><td>13</td><td>3</td><td>5</td></tr>
+          <tr><td>Kid Sasuke</td><td>Naruto</td><td><span class="rarity rarity-super">Super Rare</span></td><td>21</td><td>9</td><td>13</td><td>3</td><td>5</td></tr>
+          <tr><td>Arlong</td><td>One Piece</td><td><span class="rarity rarity-super">Super Rare</span></td><td>21</td><td>9</td><td>13</td><td>3</td><td>5</td></tr>
+          <tr><td>Enmu</td><td>Demon Slayer</td><td><span class="rarity rarity-super">Super Rare</span></td><td>21</td><td>9</td><td>13</td><td>3</td><td>5</td></tr>
+          <tr><td>Démon Gris</td><td>7DS</td><td><span class="rarity rarity-super">Super Rare</span></td><td>21</td><td>9</td><td>13</td><td>3</td><td>5</td></tr>
+          <tr><td>Gowther</td><td>7DS</td><td><span class="rarity rarity-super">Super Rare</span></td><td>19</td><td>8</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Yamcha</td><td>Dragon Ball</td><td><span class="rarity rarity-super">Super Rare</span></td><td>19</td><td>8</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Nami</td><td>One Piece après</td><td><span class="rarity rarity-super">Super Rare</span></td><td>19</td><td>8</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Dosu</td><td>Naruto</td><td><span class="rarity rarity-super">Super Rare</span></td><td>19</td><td>8</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Zaku</td><td>Naruto</td><td><span class="rarity rarity-super">Super Rare</span></td><td>19</td><td>8</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Kin</td><td>Naruto</td><td><span class="rarity rarity-super">Super Rare</span></td><td>19</td><td>8</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Kaigaku</td><td>Demon Slayer</td><td><span class="rarity rarity-super">Super Rare</span></td><td>19</td><td>8</td><td>12</td><td>3</td><td>5</td></tr>
+          <tr><td>Shuriken Fuma</td><td>Naruto</td><td><span class="rarity rarity-super">Super Rare</span></td><td>14</td><td>7</td><td>8</td><td>2</td><td>4</td></tr>
+          <tr><td>Naruto</td><td>Naruto</td><td><span class="rarity rarity-epic">Épique</span></td><td>59</td><td>26</td><td>34</td><td>5</td><td>6</td></tr>
+          <tr><td>Gohan Adulte</td><td>Dragon Ball</td><td><span class="rarity rarity-epic">Épique</span></td><td>57</td><td>25</td><td>33</td><td>5</td><td>6</td></tr>
+          <tr><td>Maito Gai</td><td>Naruto</td><td><span class="rarity rarity-epic">Épique</span></td><td>35</td><td>15</td><td>21</td><td>5</td><td>7</td></tr>
+          <tr><td>Rengoku</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>35</td><td>15</td><td>21</td><td>4</td><td>6</td></tr>
+          <tr><td>Sakura</td><td>Boruto</td><td><span class="rarity rarity-epic">Épique</span></td><td>35</td><td>15</td><td>21</td><td>5</td><td>7</td></tr>
+          <tr><td>Orochimaru</td><td>Naruto</td><td><span class="rarity rarity-epic">Épique</span></td><td>35</td><td>15</td><td>21</td><td>5</td><td>7</td></tr>
+          <tr><td>Katakuri</td><td>One Piece</td><td><span class="rarity rarity-epic">Épique</span></td><td>35</td><td>15</td><td>21</td><td>5</td><td>7</td></tr>
+          <tr><td>Daki/Gyutaro</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>35</td><td>14</td><td>22</td><td>5</td><td>7</td></tr>
+          <tr><td>Hatengu</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>35</td><td>13</td><td>23</td><td>5</td><td>7</td></tr>
+          <tr><td>C-17</td><td>Dragon Ball</td><td><span class="rarity rarity-epic">Épique</span></td><td>34</td><td>16</td><td>19</td><td>4</td><td>7</td></tr>
+          <tr><td>Sanemi</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>34</td><td>17</td><td>18</td><td>4</td><td>7</td></tr>
+          <tr><td>Arthur Pendragon</td><td>7DS</td><td><span class="rarity rarity-epic">Épique</span></td><td>34</td><td>15</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Broly</td><td>Dragon Ball</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>14</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Piccolo</td><td>Dragon Ball</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>14</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Gaara</td><td>Naruto</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>14</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Giyu Tomioka</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>14</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Trunks (Futur)</td><td>Dragon Ball</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>14</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Galan</td><td>7DS</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>14</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Kisame</td><td>Naruto</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>14</td><td>20</td><td>4</td><td>7</td></tr>
+          <tr><td>Jogo</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>12</td><td>22</td><td>4</td><td>7</td></tr>
+          <tr><td>Gyokko</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>33</td><td>11</td><td>23</td><td>4</td><td>7</td></tr>
+          <tr><td>Vegeta</td><td>Dragon Ball</td><td><span class="rarity rarity-epic">Épique</span></td><td>32</td><td>14</td><td>19</td><td>4</td><td>7</td></tr>
+          <tr><td>Sabre du Soleil</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>32</td><td>16</td><td>17</td><td>5</td><td>8</td></tr>
+          <tr><td>Ban</td><td>7DS</td><td><span class="rarity rarity-epic">Épique</span></td><td>31</td><td>13</td><td>19</td><td>4</td><td>7</td></tr>
+          <tr><td>King</td><td>7DS</td><td><span class="rarity rarity-epic">Épique</span></td><td>31</td><td>13</td><td>19</td><td>4</td><td>7</td></tr>
+          <tr><td>Muichiro Tokito</td><td>Demon Slayer</td><td><span class="rarity rarity-epic">Épique</span></td><td>31</td><td>13</td><td>19</td><td>4</td><td>7</td></tr>
+          <tr><td>Monspiet</td><td>7DS</td><td><span class="rarity rarity-epic">Épique</span></td><td>31</td><td>13</td><td>19</td><td>4</td><td>7</td></tr>
+          <tr><td>Vieux Gowther</td><td>7DS</td><td><span class="rarity rarity-epic">Épique</span></td><td>31</td><td>14</td><td>18</td><td>4</td><td>7</td></tr>
+          <tr><td>Ener</td><td>One Piece</td><td><span class="rarity rarity-epic">Épique</span></td><td>31</td><td>13</td><td>19</td><td>4</td><td>7</td></tr>
+          <tr><td>Luffy (Pré-ellipse)</td><td>One Piece</td><td><span class="rarity rarity-epic">Épique</span></td><td>29</td><td>12</td><td>18</td><td>4</td><td>6</td></tr>
+          <tr><td>Megumi Fushiguro</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-epic">Épique</span></td><td>28</td><td>9</td><td>14</td><td>4</td><td>7</td></tr>
+          <tr><td>Zoro (Pré-ellipse)</td><td>One Piece</td><td><span class="rarity rarity-epic">Épique</span></td><td>27</td><td>11</td><td>17</td><td>3</td><td>5</td></tr>
+          <tr><td>Shikamaru</td><td>Naruto</td><td><span class="rarity rarity-epic">Épique</span></td><td>27</td><td>11</td><td>17</td><td>3</td><td>6</td></tr>
+          <tr><td>Franky</td><td>One Piece</td><td><span class="rarity rarity-epic">Épique</span></td><td>27</td><td>11</td><td>17</td><td>3</td><td>6</td></tr>
+          <tr><td>Sanji (Pré-ellipse)</td><td>One Piece</td><td><span class="rarity rarity-epic">Épique</span></td><td>25</td><td>10</td><td>16</td><td>3</td><td>6</td></tr>
+          <tr><td>Cell Max</td><td>Dragon Ball</td><td><span class="rarity rarity-myth">Mythique</span></td><td>63</td><td>32</td><td>32</td><td>4</td><td>7</td></tr>
+          <tr><td>Merlin</td><td>7DS</td><td><span class="rarity rarity-myth">Mythique</span></td><td>61</td><td>25</td><td>37</td><td>4</td><td>7</td></tr>
+          <tr><td>Gogeta</td><td>Dragon Ball</td><td><span class="rarity rarity-myth">Mythique</span></td><td>60</td><td>31</td><td>30</td><td>4</td><td>7</td></tr>
+          <tr><td>Momoshiki Otsutsuki</td><td>Boruto</td><td><span class="rarity rarity-myth">Mythique</span></td><td>60</td><td>30</td><td>31</td><td>5</td><td>6</td></tr>
+          <tr><td>Escanor</td><td>7DS</td><td><span class="rarity rarity-myth">Mythique</span></td><td>59</td><td>32</td><td>28</td><td>5</td><td>8</td></tr>
+          <tr><td>Kaido</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>58</td><td>28</td><td>31</td><td>4</td><td>7</td></tr>
+          <tr><td>Big Mom</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>58</td><td>29</td><td>30</td><td>4</td><td>7</td></tr>
+          <tr><td>Orange Piccolo</td><td>Dragon Ball</td><td><span class="rarity rarity-myth">Mythique</span></td><td>57</td><td>24</td><td>34</td><td>5</td><td>7</td></tr>
+          <tr><td>Massue de Kaido</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>57</td><td>29</td><td>29</td><td>5</td><td>7</td></tr>
+          <tr><td>Zeldris</td><td>7DS</td><td><span class="rarity rarity-myth">Mythique</span></td><td>56</td><td>24</td><td>33</td><td>4</td><td>8</td></tr>
+          <tr><td>Maito Gai (8 Portes)</td><td>Naruto</td><td><span class="rarity rarity-myth">Mythique</span></td><td>55</td><td>23</td><td>33</td><td>4</td><td>7</td></tr>
+          <tr><td>Trafalgar Law</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>55</td><td>20</td><td>36</td><td>4</td><td>7</td></tr>
+          <tr><td>Barbe Noire</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>54</td><td>23</td><td>32</td><td>5</td><td>8</td></tr>
+          <tr><td>Yuta</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-myth">Mythique</span></td><td>53</td><td>22</td><td>32</td><td>4</td><td>7</td></tr>
+          <tr><td>Boruto Uzumaki</td><td>Boruto</td><td><span class="rarity rarity-myth">Mythique</span></td><td>53</td><td>27</td><td>27</td><td>4</td><td>8</td></tr>
+          <tr><td>Pain</td><td>Naruto</td><td><span class="rarity rarity-myth">Mythique</span></td><td>53</td><td>24</td><td>30</td><td>5</td><td>8</td></tr>
+          <tr><td>Yuji Itadori</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-myth">Mythique</span></td><td>52</td><td>26</td><td>27</td><td>5</td><td>8</td></tr>
+          <tr><td>Kawaki</td><td>Boruto</td><td><span class="rarity rarity-myth">Mythique</span></td><td>51</td><td>23</td><td>29</td><td>5</td><td>7</td></tr>
+          <tr><td>Elizabeth Déesse</td><td>7DS</td><td><span class="rarity rarity-myth">Mythique</span></td><td>50</td><td>15</td><td>25</td><td>5</td><td>7</td></tr>
+          <tr><td>Tanjiro</td><td>Demon Slayer</td><td><span class="rarity rarity-myth">Mythique</span></td><td>50</td><td>24</td><td>27</td><td>4</td><td>6</td></tr>
+          <tr><td>Akaza</td><td>Demon Slayer</td><td><span class="rarity rarity-myth">Mythique</span></td><td>50</td><td>26</td><td>25</td><td>4</td><td>7</td></tr>
+          <tr><td>Sanji</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>49</td><td>21</td><td>29</td><td>4</td><td>7</td></tr>
+          <tr><td>Gyomei</td><td>Demon Slayer</td><td><span class="rarity rarity-myth">Mythique</span></td><td>49</td><td>21</td><td>29</td><td>5</td><td>8</td></tr>
+          <tr><td>Jiraya</td><td>Naruto</td><td><span class="rarity rarity-myth">Mythique</span></td><td>49</td><td>23</td><td>27</td><td>4</td><td>7</td></tr>
+          <tr><td>Jinbe</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>48</td><td>22</td><td>27</td><td>4</td><td>6</td></tr>
+          <tr><td>Zoro Enma</td><td>One Piece</td><td><span class="rarity rarity-myth">Mythique</span></td><td>47</td><td>20</td><td>28</td><td>4</td><td>7</td></tr>
+          <tr><td>Kakashi</td><td>Naruto</td><td><span class="rarity rarity-myth">Mythique</span></td><td>45</td><td>19</td><td>27</td><td>5</td><td>8</td></tr>
+          <tr><td>Whis</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>85</td><td>40</td><td>46</td><td>5</td><td>8</td></tr>
+          <tr><td>Beerus</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>75</td><td>35</td><td>41</td><td>5</td><td>8</td></tr>
+          <tr><td>Gohan Beast</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>73</td><td>34</td><td>40</td><td>5</td><td>6</td></tr>
+          <tr><td>Meliodas</td><td>7DS</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>73</td><td>37</td><td>37</td><td>5</td><td>8</td></tr>
+          <tr><td>Broly SSJ Légendaire</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>71</td><td>33</td><td>39</td><td>4</td><td>7</td></tr>
+          <tr><td>Gojo Satoru</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>71</td><td>33</td><td>39</td><td>4</td><td>7</td></tr>
+          <tr><td>Gogeta SSJ4</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>71</td><td>36</td><td>36</td><td>4</td><td>8</td></tr>
+          <tr><td>Démon Originel</td><td>7DS</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>71</td><td>37</td><td>35</td><td>4</td><td>7</td></tr>
+          <tr><td>Kaguya Otsutsuki</td><td>Naruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>71</td><td>36</td><td>36</td><td>5</td><td>7</td></tr>
+          <tr><td>Isshiki Otsutsuki</td><td>Boruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>71</td><td>36</td><td>36</td><td>4</td><td>7</td></tr>
+          <tr><td>Black Freezer</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>71</td><td>36</td><td>36</td><td>4</td><td>6</td></tr>
+          <tr><td>Arthur (Maitre du chaos)</td><td>7DS</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>70</td><td>30</td><td>38</td><td>4</td><td>6</td></tr>
+          <tr><td>Minato</td><td>Naruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>70</td><td>36</td><td>35</td><td>4</td><td>7</td></tr>
+          <tr><td>Ryomen Sukuna</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>70</td><td>36</td><td>35</td><td>4</td><td>5</td></tr>
+          <tr><td>Cath Palug</td><td>7DS</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>70</td><td>37</td><td>34</td><td>5</td><td>8</td></tr>
+          <tr><td>Madara</td><td>Naruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>70</td><td>35</td><td>36</td><td>4</td><td>5</td></tr>
+          <tr><td>Muzan</td><td>Demon Slayer</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>70</td><td>36</td><td>35</td><td>4</td><td>7</td></tr>
+          <tr><td>Imu</td><td>One Piece</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>70</td><td>36</td><td>35</td><td>4</td><td>7</td></tr>
+          <tr><td>Goku UI</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>69</td><td>32</td><td>38</td><td>4</td><td>7</td></tr>
+          <tr><td>Mael</td><td>7DS</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>69</td><td>32</td><td>38</td><td>4</td><td>6</td></tr>
+          <tr><td>Yoriichi</td><td>Demon Slayer</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>69</td><td>32</td><td>38</td><td>5</td><td>8</td></tr>
+          <tr><td>Hashirama Senju</td><td>Naruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>69</td><td>35</td><td>35</td><td>4</td><td>7</td></tr>
+          <tr><td>Kokushibo</td><td>Demon Slayer</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>69</td><td>35</td><td>35</td><td>4</td><td>8</td></tr>
+          <tr><td>Jiren</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>69</td><td>35</td><td>35</td><td>5</td><td>8</td></tr>
+          <tr><td>Shanks</td><td>One Piece</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>68</td><td>35</td><td>34</td><td>5</td><td>7</td></tr>
+          <tr><td>Katana de Kokushibo</td><td>Demon Slayer</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>68</td><td>35</td><td>34</td><td>4</td><td>6</td></tr>
+          <tr><td>Rika</td><td>Jujutsu Kaisen</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>68</td><td>34</td><td>35</td><td>5</td><td>7</td></tr>
+          <tr><td>Luffy Gear 5</td><td>One Piece</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>67</td><td>31</td><td>37</td><td>5</td><td>7</td></tr>
+          <tr><td>Vegeta Ultra Ego</td><td>Dragon Ball</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>66</td><td>34</td><td>33</td><td>5</td><td>8</td></tr>
+          <tr><td>Tobirama</td><td>Naruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>66</td><td>34</td><td>33</td><td>4</td><td>8</td></tr>
+          <tr><td>Naruto Hokage</td><td>Boruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>65</td><td>30</td><td>36</td><td>4</td><td>7</td></tr>
+          <tr><td>Dracule Mihawk</td><td>One Piece</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>65</td><td>33</td><td>33</td><td>4</td><td>7</td></tr>
+          <tr><td>Sasuke</td><td>Boruto</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>63</td><td>28</td><td>36</td><td>5</td><td>8</td></tr>
+          <tr><td>Rayleigh</td><td>One Piece</td><td><span class="rarity rarity-legend">Légendaire</span></td><td>61</td><td>27</td><td>35</td><td>4</td><td>6</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-about">
+      <h2>À propos</h2>
+      <p class="about-name">Jalsces</p>
+
+      <p class="about-label">Mes 5 objets préférés</p>
+      <ul class="fav-list">
+        <li>Dial <span class="rarity rarity-epic">Épique</span></li>
+        <li>Soru Soru <span class="rarity rarity-myth">Mythique</span></li>
+        <li>Lostyvane <span class="rarity rarity-myth">Mythique</span></li>
+        <li>Rika <span class="rarity rarity-legend">Légendaire</span></li>
+        <li>Potaras <span class="rarity rarity-legend">Légendaire</span></li>
+      </ul>
+
+      <p class="about-label">Mes 5 persos préférés</p>
+      <ul class="fav-list">
+        <li>Chaozu <span class="rarity rarity-rare">Rare</span></li>
+        <li>Merlin <span class="rarity rarity-myth">Mythique</span></li>
+        <li>Gai (8 portes) <span class="rarity rarity-myth">Mythique</span></li>
+        <li>Akaza <span class="rarity rarity-myth">Mythique</span></li>
+        <li>Gohan Kid SSJ2 <span class="rarity rarity-super">Super Rare</span></li>
+      </ul>
+    </section>
+
+    <footer>
+      Manga-Cards — mis à jour manuellement.
+    </footer>
+  </div>
+
+  <script>
+    // Gestion des onglets
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    tabButtons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        tabButtons.forEach(function(b) { b.classList.remove('active'); });
+        tabPanels.forEach(function(p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.target).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
